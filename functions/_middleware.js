@@ -28,7 +28,7 @@ async function roleFromCookie(cookieHeader, secret) {
   if (role !== "owner" && role !== "viewer") return null;
   const good = await hmac(secret, role + "." + ts);
   if (good !== sig) return null;
-  if (Date.now() - Number(ts) > 1000 * 60 * 60 * 24 * 7) return null;
+  if (Date.now() - Number(ts) > 1000 * 60 * 60 * 12) return null; // 12-hour backstop
   return role;
 }
 
@@ -53,7 +53,10 @@ function loginPage(msg) {
     <label>Username</label>
     <input name="username" autocomplete="username" autofocus>
     <label>Password</label>
-    <input name="password" type="password" autocomplete="current-password">
+    <div style="position:relative">
+      <input id="pw" name="password" type="password" autocomplete="current-password" style="padding-right:52px">
+      <button type="button" id="eye" onclick="var p=document.getElementById('pw');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'Show':'Hide';" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:auto;margin:0;padding:6px 10px;font-size:12px;font-weight:600;background:#1f2b38;color:#8aa0b4;border-radius:7px">Show</button>
+    </div>
     <button type="submit">Sign in</button>
   </form>
 </body></html>`;
@@ -81,9 +84,12 @@ export async function onRequest(context) {
     else if (u === env.VIEWER_USER && p === env.VIEWER_PASS) role = "viewer";
     if (!role) return loginPage("Wrong username or password.");
     const token = await makeToken(role, secret);
+    // Session cookie (no Max-Age) -> cleared when the browser is fully closed, so it is
+    // NOT "always logged in". The signed token is also only trusted for 12 hours (see
+    // roleFromCookie) as a backstop, forcing a fresh sign-in at least twice a day.
     return new Response(null, { status: 302, headers: {
       "Location": "/",
-      "Set-Cookie": `cc_auth=${encodeURIComponent(token)}; Path=/; Max-Age=${60 * 60 * 24 * 7}; HttpOnly; Secure; SameSite=Lax`
+      "Set-Cookie": `cc_auth=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax`
     }});
   }
 
