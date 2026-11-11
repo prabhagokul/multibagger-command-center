@@ -1,8 +1,12 @@
 // Cloudflare Pages Function — login gate + owner/viewer dual view.
-// Credentials come from environment variables (set in the Pages dashboard, changeable anytime):
-//   OWNER_USER, OWNER_PASS   -> full report (all amounts)
-//   VIEWER_USER, VIEWER_PASS -> redacted report (holdings without quantities/amounts/P&L)
-//   COOKIE_SECRET            -> any long random string (signs the login cookie)
+// Env vars (set in the Pages dashboard, changeable anytime):
+//   OWNER_USER / OWNER_PASS   -> full report (all amounts)
+//   VIEWER_USER / VIEWER_PASS -> redacted report (holdings without quantities/amounts/P&L)
+//   COOKIE_SECRET             -> any long random string (signs the login cookie)
+//
+// Security model: every request runs through this middleware. The raw report files
+// (full.html / viewer.html) are ONLY fetched internally, chosen by the signed-in role,
+// so a viewer can never reach the full file no matter what path they request.
 
 const enc = new TextEncoder();
 
@@ -24,7 +28,7 @@ async function roleFromCookie(cookieHeader, secret) {
   if (role !== "owner" && role !== "viewer") return null;
   const good = await hmac(secret, role + "." + ts);
   if (good !== sig) return null;
-  if (Date.now() - Number(ts) > 1000 * 60 * 60 * 24 * 7) return null; // 7-day sessions
+  if (Date.now() - Number(ts) > 1000 * 60 * 60 * 24 * 7) return null;
   return role;
 }
 
@@ -62,11 +66,6 @@ export async function onRequest(context) {
   const path = url.pathname;
   const secret = env.COOKIE_SECRET || "change-me";
 
-  // Never allow the raw report files to be fetched directly.
-  if (path === "/full.html" || path === "/viewer.html") {
-    return new Response("Not found", { status: 404 });
-  }
-
   // Logout
   if (path === "/__logout") {
     return new Response(null, { status: 302, headers: { "Location": "/", "Set-Cookie": "cc_auth=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax" } });
@@ -92,8 +91,12 @@ export async function onRequest(context) {
   const role = await roleFromCookie(request.headers.get("Cookie"), secret);
   if (!role) return loginPage("");
 
-  // Serve the correct report (fetched internally from static assets; never exposed as a URL)
-  const file = role === "owner" ? "/full.html" : "/viewer.html";
-  const asset = await env.ASSETS.fetch(new Request(new URL(file, url.origin), request));
-  return new Response(asset.body, { status: 200, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+  // Serve the role's report. The ASSETS binding serves the static file directly and does
+  // NOT re-run this middleware, so there is no loop and the file path is never exposed.
+  const assetUrl = new URL(url);
+  assetUrl.pathname = role === "owner" ? "/full.html" : "/viewer.html";
+  const assetRes = await env.ASSETS.fetch(new Request(assetUrl.toString(), { method: "GET" }));
+  const headers = new Headers(assetRes.headers);
+  headers.set("Cache-Control", "no-store");
+  return new Response(assetRes.body, { status: assetRes.status, headers });
 }
