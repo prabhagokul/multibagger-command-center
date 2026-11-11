@@ -335,41 +335,6 @@ h1{font-size:24px;margin:0 0 2px;letter-spacing:.3px}
 function __ph(){try{var h=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight,document.body.offsetHeight);if(window.parent&amp;&amp;window.parent!==window)window.parent.postMessage({__ccFrameHeight:h,ccId:'pulse'},'*');}catch(e){}}
 window.addEventListener('load',__ph);window.addEventListener('resize',__ph);setInterval(__ph,700);setTimeout(__ph,200);
 </script>
-
-<script>
-window.VIEWER=true;
-(function(){
- function cap(n){return (n==null)?'—':Number(n).toLocaleString('en-IN');}
- function red(){
-   var sec=document.getElementById('holdings'); if(!sec||sec.getAttribute('data-vred'))return;
-   if(typeof L==='undefined'||typeof window.metrics!=='function'||!L.positions)return;
-   var rows=L.positions.map(function(p){
-     var m=window.metrics(p)||{};
-     var stg=m.stage?('Stage '+m.stage):'—', sig=m.signal||'—';
-     var dd=(m.off3y!=null)?m.off3y+'%':'—';
-     return '<tr><td style="padding:8px 10px;border-bottom:1px solid #1f2b38"><b>'+p.sym+'</b></td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+(p.segManual||p.type||'')+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+stg+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+sig+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+dd+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+cap(m.cap)+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+cap(m.price)+'</td></tr>';
-   }).join('');
-   var badge=sec.querySelector('.sheetstamp');
-   sec.innerHTML=''; if(badge)sec.appendChild(badge);
-   var d=document.createElement('div');
-   d.innerHTML='<h2 style="margin:12px 0 2px">Holdings</h2>'+
-     '<p style="color:#8aa0b4;font-size:12.5px;margin:0 0 14px">Shared view — portfolio quantities, invested value and profit/loss are hidden. Shown: stage, 200-DMA signal, drawdown from high, market cap and current price.</p>'+
-     '<div style="overflow:auto;border:1px solid #1f2b38;border-radius:10px"><table style="width:100%;border-collapse:collapse;font-size:13px;color:#e7eef6">'+
-     '<thead><tr style="color:#8aa0b4;font-size:11px;text-transform:uppercase;text-align:left">'+
-     '<th style="padding:8px 10px">Stock</th><th style="padding:8px 10px">Segment</th><th style="padding:8px 10px">Stage</th><th style="padding:8px 10px">Signal</th><th style="padding:8px 10px;text-align:right">From high</th><th style="padding:8px 10px;text-align:right">Mkt cap ₹cr</th><th style="padding:8px 10px;text-align:right">Cur price ₹</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
-   sec.appendChild(d); sec.setAttribute('data-vred','1');
- }
- var n=0,iv=setInterval(function(){n++;try{red();}catch(e){} var s=document.getElementById('holdings'); if((s&&s.getAttribute('data-vred'))||n>50)clearInterval(iv);},250);
- window.addEventListener('load',red);
-})();
-</script>
-<a href="/__logout" title="Sign out" style="position:fixed;top:10px;right:12px;z-index:99999;background:#1f2b38;color:#e7eef6;font:600 12px -apple-system,Segoe UI,Roboto,Arial,sans-serif;text-decoration:none;padding:7px 13px;border-radius:9px;border:1px solid #2dd4bf;box-shadow:0 2px 10px rgba(0,0,0,.4)">⏻ Sign out</a>
 </body></html>" scrolling="no"
       style="width:100%;height:1100px;min-height:640px;border:1px solid var(--line);border-radius:10px;background:#0b1016;overflow:hidden;display:block"
       title="Command Center Pulse"></iframe>
@@ -1678,41 +1643,6 @@ function __ph(){try{var h=Math.max(document.documentElement.scrollHeight,documen
 window.addEventListener('load',__ph);window.addEventListener('resize',__ph);setInterval(__ph,700);setTimeout(__ph,250);
 document.addEventListener('click',function(){setTimeout(__ph,120);});
 </script>
-
-<script>
-window.VIEWER=true;
-(function(){
- function cap(n){return (n==null)?'—':Number(n).toLocaleString('en-IN');}
- function red(){
-   var sec=document.getElementById('holdings'); if(!sec||sec.getAttribute('data-vred'))return;
-   if(typeof L==='undefined'||typeof window.metrics!=='function'||!L.positions)return;
-   var rows=L.positions.map(function(p){
-     var m=window.metrics(p)||{};
-     var stg=m.stage?('Stage '+m.stage):'—', sig=m.signal||'—';
-     var dd=(m.off3y!=null)?m.off3y+'%':'—';
-     return '<tr><td style="padding:8px 10px;border-bottom:1px solid #1f2b38"><b>'+p.sym+'</b></td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+(p.segManual||p.type||'')+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+stg+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+sig+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+dd+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+cap(m.cap)+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+cap(m.price)+'</td></tr>';
-   }).join('');
-   var badge=sec.querySelector('.sheetstamp');
-   sec.innerHTML=''; if(badge)sec.appendChild(badge);
-   var d=document.createElement('div');
-   d.innerHTML='<h2 style="margin:12px 0 2px">Holdings</h2>'+
-     '<p style="color:#8aa0b4;font-size:12.5px;margin:0 0 14px">Shared view — portfolio quantities, invested value and profit/loss are hidden. Shown: stage, 200-DMA signal, drawdown from high, market cap and current price.</p>'+
-     '<div style="overflow:auto;border:1px solid #1f2b38;border-radius:10px"><table style="width:100%;border-collapse:collapse;font-size:13px;color:#e7eef6">'+
-     '<thead><tr style="color:#8aa0b4;font-size:11px;text-transform:uppercase;text-align:left">'+
-     '<th style="padding:8px 10px">Stock</th><th style="padding:8px 10px">Segment</th><th style="padding:8px 10px">Stage</th><th style="padding:8px 10px">Signal</th><th style="padding:8px 10px;text-align:right">From high</th><th style="padding:8px 10px;text-align:right">Mkt cap ₹cr</th><th style="padding:8px 10px;text-align:right">Cur price ₹</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
-   sec.appendChild(d); sec.setAttribute('data-vred','1');
- }
- var n=0,iv=setInterval(function(){n++;try{red();}catch(e){} var s=document.getElementById('holdings'); if((s&&s.getAttribute('data-vred'))||n>50)clearInterval(iv);},250);
- window.addEventListener('load',red);
-})();
-</script>
-<a href="/__logout" title="Sign out" style="position:fixed;top:10px;right:12px;z-index:99999;background:#1f2b38;color:#e7eef6;font:600 12px -apple-system,Segoe UI,Roboto,Arial,sans-serif;text-decoration:none;padding:7px 13px;border-radius:9px;border:1px solid #2dd4bf;box-shadow:0 2px 10px rgba(0,0,0,.4)">⏻ Sign out</a>
 </body>
 </html>
 " scrolling="no"
@@ -2162,41 +2092,6 @@ ITEMS.forEach(function(t,i){
 function __ph(){try{var h=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight,document.body.offsetHeight);if(window.parent&amp;&amp;window.parent!==window)window.parent.postMessage({__ccFrameHeight:h,ccId:'daily'},'*');}catch(e){}}
 window.addEventListener('load',__ph);window.addEventListener('resize',__ph);setInterval(__ph,700);setTimeout(__ph,200);
 </script>
-
-<script>
-window.VIEWER=true;
-(function(){
- function cap(n){return (n==null)?'—':Number(n).toLocaleString('en-IN');}
- function red(){
-   var sec=document.getElementById('holdings'); if(!sec||sec.getAttribute('data-vred'))return;
-   if(typeof L==='undefined'||typeof window.metrics!=='function'||!L.positions)return;
-   var rows=L.positions.map(function(p){
-     var m=window.metrics(p)||{};
-     var stg=m.stage?('Stage '+m.stage):'—', sig=m.signal||'—';
-     var dd=(m.off3y!=null)?m.off3y+'%':'—';
-     return '<tr><td style="padding:8px 10px;border-bottom:1px solid #1f2b38"><b>'+p.sym+'</b></td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+(p.segManual||p.type||'')+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+stg+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38">'+sig+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+dd+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+cap(m.cap)+'</td>'+
-       '<td style="padding:8px 10px;border-bottom:1px solid #1f2b38;text-align:right">'+cap(m.price)+'</td></tr>';
-   }).join('');
-   var badge=sec.querySelector('.sheetstamp');
-   sec.innerHTML=''; if(badge)sec.appendChild(badge);
-   var d=document.createElement('div');
-   d.innerHTML='<h2 style="margin:12px 0 2px">Holdings</h2>'+
-     '<p style="color:#8aa0b4;font-size:12.5px;margin:0 0 14px">Shared view — portfolio quantities, invested value and profit/loss are hidden. Shown: stage, 200-DMA signal, drawdown from high, market cap and current price.</p>'+
-     '<div style="overflow:auto;border:1px solid #1f2b38;border-radius:10px"><table style="width:100%;border-collapse:collapse;font-size:13px;color:#e7eef6">'+
-     '<thead><tr style="color:#8aa0b4;font-size:11px;text-transform:uppercase;text-align:left">'+
-     '<th style="padding:8px 10px">Stock</th><th style="padding:8px 10px">Segment</th><th style="padding:8px 10px">Stage</th><th style="padding:8px 10px">Signal</th><th style="padding:8px 10px;text-align:right">From high</th><th style="padding:8px 10px;text-align:right">Mkt cap ₹cr</th><th style="padding:8px 10px;text-align:right">Cur price ₹</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
-   sec.appendChild(d); sec.setAttribute('data-vred','1');
- }
- var n=0,iv=setInterval(function(){n++;try{red();}catch(e){} var s=document.getElementById('holdings'); if((s&&s.getAttribute('data-vred'))||n>50)clearInterval(iv);},250);
- window.addEventListener('load',red);
-})();
-</script>
-<a href="/__logout" title="Sign out" style="position:fixed;top:10px;right:12px;z-index:99999;background:#1f2b38;color:#e7eef6;font:600 12px -apple-system,Segoe UI,Roboto,Arial,sans-serif;text-decoration:none;padding:7px 13px;border-radius:9px;border:1px solid #2dd4bf;box-shadow:0 2px 10px rgba(0,0,0,.4)">⏻ Sign out</a>
 </body></html>" scrolling="no"
       style="width:100%;height:700px;min-height:640px;border:1px solid var(--line);border-radius:10px;background:#0b1016;overflow:hidden;display:block"
       title="Daily Checklist"></iframe>
