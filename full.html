@@ -3312,14 +3312,14 @@ window.PULSE_DATE="16 Nov 2026";   // set when the Pulse landing sheet (command_
   var NST="width:140px;padding:4px 8px;font-size:12px;border:1px solid var(--line,#2a2f3a);border-radius:7px;background:rgba(255,255,255,.04);color:inherit";
   // col = 0-based cell index. cmp: ge (>=), le (<=), absge (abs>=). sel matches cell text (substring).
   var CFG={
-    scanBtable:{search:true,ph:'stock / sector',nums:[{lbl:'min mkt cap ₹cr',col:2,cmp:'ge'},{lbl:'min % below 3y-high',col:3,cmp:'absge'}]},
+    scanBtable:{search:true,ph:'stock / sector',nums:[{lbl:'min mkt cap ₹cr',col:2,cmp:'ge'},{lbl:'min % below 3y-high',col:3,cmp:'absge'},{lbl:'min % below 52w-high',col:4,cmp:'absge'},{lbl:'min vs 200-DMA',col:5,cmp:'ge'}]},
     scanCtable:{search:true,ph:'sector',nums:[{lbl:'min S2 names',col:1,cmp:'ge'}]},
-    ffList:{search:true,ph:'company',nums:[{lbl:'min orders % rev',col:2,cmp:'ge'},{lbl:'min order value ₹cr',col:4,cmp:'ge'}]},
-    nseDDtable:{search:true,ph:'stock / sector',nums:[{lbl:'min mkt cap ₹cr',col:2,cmp:'ge'},{lbl:'min % below 3y-high',col:3,cmp:'absge'}]},
-    nseGridTable:{search:false,nums:[{lbl:'min RS',col:4,cmp:'ge'}]},
-    nseRSI60table:{search:false,nums:[{lbl:'min weekly RSI',col:2,cmp:'ge'}]},
-    nseRotTable:{search:true,ph:'sector',nums:[{lbl:'min avg RS',col:1,cmp:'ge'}]},
-    stagetable:{search:true,ph:'stock / sector',nums:[{lbl:'min RS',col:5,cmp:'ge'},{lbl:'min mkt cap ₹cr',col:2,cmp:'ge'}]},
+    ffList:{search:true,ph:'company',nums:[{lbl:'min orders % rev',col:2,cmp:'ge'},{lbl:'min orders',col:3,cmp:'ge'},{lbl:'min order value ₹cr',col:4,cmp:'ge'},{lbl:'min company rev ₹cr',col:5,cmp:'ge'}]},
+    nseDDtable:{search:true,ph:'stock / sector',nums:[{lbl:'min mkt cap ₹cr',col:2,cmp:'ge'},{lbl:'min % below 3y-high',col:3,cmp:'absge'},{lbl:'min % below 52w-high',col:4,cmp:'absge'},{lbl:'min vs 200-DMA',col:5,cmp:'ge'}]},
+    nseGridTable:{search:false,nums:[{lbl:'min price ₹',col:2,cmp:'ge'},{lbl:'min RS',col:4,cmp:'ge'},{lbl:'min wks S2',col:6,cmp:'ge'},{lbl:'min % off 52w-high',col:7,cmp:'absge'}]},
+    nseRSI60table:{search:false,nums:[{lbl:'min RS vs S&P',col:1,cmp:'ge'},{lbl:'min weekly RSI',col:2,cmp:'ge'},{lbl:'min price ₹',col:3,cmp:'ge'}]},
+    nseRotTable:{search:true,ph:'sector',nums:[{lbl:'min avg RS',col:1,cmp:'ge'},{lbl:'min % Stage-2',col:2,cmp:'ge'},{lbl:'min RS Δ1wk',col:3,cmp:'ge'},{lbl:'min names (n)',col:5,cmp:'ge'}]},
+    stagetable:{search:true,ph:'stock / sector',nums:[{lbl:'min mkt cap ₹cr',col:2,cmp:'ge'},{lbl:'min wks S2',col:4,cmp:'ge'},{lbl:'min RS',col:5,cmp:'ge'},{lbl:'min % from high',col:6,cmp:'absge'},{lbl:'min vs 200-DMA',col:7,cmp:'ge'}]},
     tbody:{search:false,sels:[{lbl:'Signal',col:7,opts:['BUY','WATCH','HOLD','SELL','CHECK']},{lbl:'Stage',col:10,opts:['1','2','3','4']}]}
   };
   var STATE={};
