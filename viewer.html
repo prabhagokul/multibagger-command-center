@@ -381,7 +381,6 @@ window.addEventListener('load',__ph);window.addEventListener('resize',__ph);setI
   <section id="scans" class="panel">
     <h2>Scan Board — the radar</h2>
     <div class="sheetstamp" id="st_scans">Last updated: —</div>
-    <div id="freshPanel" style="margin:10px 0 4px"></div>
     <div class="statbar">
       <div class="stat"><b id="s_univ">—</b><small>universe scanned</small></div>
       <div class="stat"><b id="s_inband">—</b><small>in-band ₹1.5–10k cr</small></div>
@@ -2004,7 +2003,6 @@ window.addEventListener('load',__ph);window.addEventListener('resize',__ph);setI
   <section id="allsources" class="panel">
     <h2>Sources — everything this Command Center runs on</h2>
     <div class="sheetstamp" id="st_allsources">Last updated: —</div>
-    <div id="freshPanel2" style="margin:10px 0 4px"></div>
     <p class="muted">One directory of every data source across both halves of the report, so any number can be traced. Accuracy rule everywhere: only these sources; if one is down, the old value stays with its old date and is flagged — never substituted, never guessed.</p>
 
     <div class="card"><h3>A · Multibagger Command Center (India small-cap engine)</h3>
@@ -3086,7 +3084,7 @@ window.PULSE_DATE="16 Nov 2026";   // set when the Pulse landing sheet (command_
     ? '<div style="color:#e53935;font-weight:800;font-size:12px;margin:2px 0 8px">\u26a0\ufe0f A daily feed is NOT today\u2019s \u2014 this scan is INCOMPLETE. Re-run with Chrome connected.</div>'
     : '<div style="color:#0f9d58;font-weight:800;font-size:12px;margin:2px 0 8px">\u2705 Every daily feed is today\u2019s. Weekly/monthly feeds show their latest disclosure.</div>';
   var html='<div style="border:1px solid var(--line,#2a2f3a);border-radius:10px;padding:10px 12px;background:rgba(255,255,255,.02)"><div style="font-weight:800;font-size:12.5px;margin-bottom:4px">Freshness audit \u2014 every DAILY feed must read today <span style="color:var(--muted);font-weight:600">(run '+RUN+')</span></div>'+banner+'<table style="font-size:12.5px;border-collapse:collapse"><tr style="color:var(--muted);font-size:11px"><th style="text-align:left;padding:0 12px 4px 0">Data feed</th><th style="text-align:left;padding:0 10px 4px 0">Last pulled</th><th style="text-align:left;padding:0 10px 4px 0">Cadence</th><th style="text-align:left;padding:0 0 4px 0">Status</th></tr>'+body+'</table></div>';
-  ['freshPanel','freshPanel2','freshPanel3'].forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML=html;});
+  ['freshPanel3'].forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML=html;});
 }catch(e){} })();
 </script>
 <script>
