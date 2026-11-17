@@ -2190,7 +2190,103 @@ window.UNIV_VERD={"360ONE":[2.3,3],"3MINDIA":[5.5,2],"AADHARHFC":[10,2],"AARTIDR
 window.UNIV_DATE="16 Nov 2026";
 
 </script>
-<script src="deals_fiidii.js"></script>
+<script>
+/* ===== Deals / FII-DII data — refreshed live each run via Gokul's logged-in Chrome =====
+   Sources (LOCKED): Stock Edge Premium (web.stockedge.com) — FII/DII cash-market net is the
+   FULL MONTH from the "FII/DII Activity → CM Provisional" tab (web.stockedge.com/fii-activity
+   ?section=cm-provisional, FII + DII daily toggles — lists every trading day of the month);
+   the bulk/block deals come from the Deals page (exact investor/qty/price, ~2 days render).
+   The Wrap (thewrap.in/blog) for the WEEKLY curated notable insider/block/bulk list (actor/%/₹value).
+   APPEND-ON-REFRESH: Stock Edge only renders ~2 recent days, so each run appends the latest
+   rendered day(s); The Wrap adds each new weekly edition. Past months are KEPT, never dropped.
+   Dedup rule: a Stock-Edge row and a Wrap row describing the SAME trade are merged (Wrap gives
+   the ₹value/%, Stock Edge the exact qty/price) — never shown twice.
+   Row schema: {date, kind:'Insider'|'Block'|'Bulk', stock, actor, side:'Buy'|'Sell',
+                qty, price, valueCr, pct, src:'StockEdge'|'TheWrap'|'Both'} */
+window.DEALS_UPDATED = "17 Nov 2026";
+window.DEALS_MONTHS = {
+ "2026-11": {
+  label: "November 2026",
+  fiidii: [
+   {d:"17 Nov 2026", fii:4195.38,  dii:196.93},
+   {d:"16 Nov 2026", fii:4864.68,  dii:-3519.05},
+   {d:"13 Nov 2026", fii:5736.55,  dii:-2253.58},
+   {d:"12 Nov 2026", fii:7830.60,  dii:-6331.17},
+   {d:"11 Nov 2026", fii:12563.33, dii:-8434.53},
+   {d:"09 Nov 2026", fii:7212.22,  dii:-7172.53},
+   {d:"08 Nov 2026", fii:-0.25,    dii:-700.31},
+   {d:"06 Nov 2026", fii:13749.82, dii:-5968.70},
+   {d:"05 Nov 2026", fii:14974.68, dii:-10444.54},
+   {d:"04 Nov 2026", fii:7284.03,  dii:-3712.23},
+   {d:"03 Nov 2026", fii:6836.81,  dii:-3678.85},
+   {d:"02 Nov 2026", fii:3114.68,  dii:-392.20}
+  ],
+  deals: [
+   /* ---- Stock Edge — daily bulk/block (exact investor/qty/price) ---- */
+   {date:"17 Nov 2026", kind:"Bulk",  stock:"AGI Infra",                       actor:"Arthkumbh Ventures LLP",            side:"Sell", qty:"9,00,000",     price:320.00,  valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Alkem Laboratories",              actor:"Samprada & Nanhamati Singh Trust",  side:"Sell", qty:"5,97,825",     price:5050.00, valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Alkem Laboratories",              actor:"ICICI Prudential MF",               side:"Buy",  qty:"1,78,285",     price:5050.00, valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Alkem Laboratories",              actor:"Nippon India MF",                   side:"Buy",  qty:"1,60,265",     price:5050.00, valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Alkem Laboratories",              actor:"DSP MF",                            side:"Buy",  qty:"1,60,265",     price:5050.00, valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Alkem Laboratories",              actor:"HDFC MF",                           side:"Buy",  qty:"99,010",       price:5050.00, valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Bulk",  stock:"Arisinfra Solutions",             actor:"Siddharth Bhaskar Shah",            side:"Buy",  qty:"5,00,000",     price:151.33,  valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Billionbrains Garage (Groww)",    actor:"Ribbit Capital V L.P.",             side:"Sell", qty:"4,85,86,888",  price:219.00,  valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Billionbrains Garage (Groww)",    actor:"Ribbit Cayman GW Holdings V",       side:"Sell", qty:"3,84,13,112",  price:219.00,  valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Billionbrains Garage (Groww)",    actor:"Societe Generale",                  side:"Buy",  qty:"1,08,50,000",  price:219.00,  valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Block", stock:"Billionbrains Garage (Groww)",    actor:"Kotak Mahindra MF",                 side:"Buy",  qty:"1,64,73,214",  price:219.00,  valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Bulk",  stock:"Evexia Lifecare",                 actor:"Hill Top Impex Pvt Ltd",            side:"Buy",  qty:"15,03,00,000", price:1.23,    valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Bulk",  stock:"Evexia Lifecare",                 actor:"Mansi Share & Stock Broking",       side:"Sell", qty:"8,99,59,059",  price:1.23,    valueCr:null, pct:"", src:"StockEdge"},
+   {date:"17 Nov 2026", kind:"Bulk",  stock:"Evexia Lifecare",                 actor:"Setu Securities Pvt Ltd",           side:"Sell", qty:"7,15,41,906",  price:1.23,    valueCr:null, pct:"", src:"StockEdge"},
+
+   /* ---- The Wrap — weekly curated (actor/%/₹value) ---- */
+   /* week ending 15 Nov 2026 (#177) */
+   {date:"wk 15 Nov 2026", kind:"Insider", stock:"Vectras Enprocon",   actor:"Management",                        side:"Buy",  qty:"", price:null, valueCr:2.55,  pct:"1.25%", src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Insider", stock:"Havells India",      actor:"Promoter",                          side:"Buy",  qty:"", price:null, valueCr:347,   pct:"0.48%", src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Insider", stock:"Clay Craft India",   actor:"Promoter",                          side:"Buy",  qty:"", price:null, valueCr:1.48,  pct:"0.41%", src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Block",   stock:"Meesho",             actor:"Mutual Funds & Institutions",       side:"Buy",  qty:"", price:null, valueCr:1885,  pct:"",      src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Block",   stock:"Aditya Infotech",    actor:"Motilal Oswal & Kotak MF",          side:"Buy",  qty:"", price:null, valueCr:582,   pct:"",      src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Bulk",    stock:"Meesho",             actor:"VC Fund",                           side:"Sell", qty:"", price:null, valueCr:1885,  pct:"",      src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Bulk",    stock:"Aditya Infotech",    actor:"Motilal Oswal MF",                  side:"Buy",  qty:"", price:null, valueCr:349,   pct:"",      src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Bulk",    stock:"Rallis India",       actor:"ASK Investment Managers",           side:"Sell", qty:"", price:null, valueCr:24,    pct:"",      src:"TheWrap"},
+   {date:"wk 15 Nov 2026", kind:"Bulk",    stock:"Granules India",     actor:"HNI",                               side:"Buy",  qty:"", price:null, valueCr:24,    pct:"",      src:"TheWrap"},
+   /* week ending 08 Nov 2026 (#176) */
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Aequs",                 actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:325,   pct:"2.21%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Kiri Industries",       actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:289,   pct:"8.86%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Ola Electric Mobility", actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:159,   pct:"1.00%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Go Fashion",            actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:25,    pct:"1.76%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Sri Lotus Developers",  actor:"Promoter",                       side:"Sell", qty:"", price:null, valueCr:573,   pct:"5.00%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"V2 Retail",             actor:"Promoter",                       side:"Sell", qty:"", price:null, valueCr:258,   pct:"4.00%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Gallantt Ispat",        actor:"Promoter",                       side:"Sell", qty:"", price:null, valueCr:270,   pct:"2.10%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Insider", stock:"Shreeji Shipping Global",actor:"Promoter",                      side:"Sell", qty:"", price:null, valueCr:256,   pct:"1.78%", src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Block",   stock:"Lenskart Solutions",    actor:"Kotak Mahindra & UTI MF",        side:"Buy",  qty:"", price:null, valueCr:356,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Block",   stock:"Alivus Life Sciences",  actor:"Helios, Param Capital & Bandhan",side:"Buy",  qty:"", price:null, valueCr:246,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Block",   stock:"V2 Retail",             actor:"Cupid promoter",                 side:"Buy",  qty:"", price:null, valueCr:133,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"Billionbrains Garage (Groww)",actor:"Goldman Sachs",            side:"Buy",  qty:"", price:null, valueCr:764,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"Lenskart Solutions",    actor:"Societe Generale",               side:"Buy",  qty:"", price:null, valueCr:624,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"JSW Cement",            actor:"Nomura",                         side:"Buy",  qty:"", price:null, valueCr:145,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"Cartrade Tech",         actor:"Smallcap World Fund",            side:"Buy",  qty:"", price:null, valueCr:369,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"Go Fashion India",      actor:"Franklin Templeton MF",          side:"Sell", qty:"", price:null, valueCr:33,    pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"EAAA India Alternatives",actor:"HDFC MF",                       side:"Buy",  qty:"", price:null, valueCr:135,   pct:"",      src:"TheWrap"},
+   {date:"wk 08 Nov 2026", kind:"Bulk",    stock:"SFC Environmental Tech", actor:"Trust MF, Carnelian & Abakkus",  side:"Buy",  qty:"", price:null, valueCr:117,   pct:"",      src:"TheWrap"},
+   /* week ending 01 Nov 2026 (#175) */
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"Seshasayee Paper & Boards",actor:"Promoter",                    side:"Buy",  qty:"", price:null, valueCr:15.26, pct:"1.19%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"Westlife Foodworld",     actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:65,    pct:"0.70%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"Galaxy Bearings",        actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:1.64,  pct:"0.55%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"Shakti Pumps",           actor:"Promoter",                       side:"Buy",  qty:"", price:null, valueCr:16.33, pct:"0.37%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"MRC Agrotech",           actor:"Promoter",                       side:"Sell", qty:"", price:null, valueCr:1.97,  pct:"1.88%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"Kapston Services",       actor:"Promoter",                       side:"Sell", qty:"", price:null, valueCr:4.99,  pct:"0.34%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Insider", stock:"Sakar Healthcare",       actor:"Promoter",                       side:"Sell", qty:"", price:null, valueCr:4.45,  pct:"0.21%", src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Block",   stock:"Swiggy",                 actor:"Tencent sold; AB & Nippon MF bought",side:"Sell",qty:"",price:null,valueCr:982,   pct:"",      src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Bulk",    stock:"Sagility",               actor:"ICICI Life Insurance & MF",      side:"Buy",  qty:"", price:null, valueCr:289,   pct:"",      src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Bulk",    stock:"Sri Lotus Developers",   actor:"Smallcap World Fund",            side:"Buy",  qty:"", price:null, valueCr:339,   pct:"",      src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Bulk",    stock:"Strides Pharma",         actor:"SBI Life Insurance",             side:"Buy",  qty:"", price:null, valueCr:69,    pct:"",      src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Bulk",    stock:"Birlasoft",              actor:"Societe Generale",               side:"Buy",  qty:"", price:null, valueCr:56,    pct:"",      src:"TheWrap"},
+   {date:"wk 01 Nov 2026", kind:"Bulk",    stock:"Jubilant Ingrevia",      actor:"East Bridge Capital",            side:"Buy",  qty:"", price:null, valueCr:55,    pct:"",      src:"TheWrap"}
+  ]
+ }
+};
+
+</script>
 <script>
 // Auto-generated FF order-book list (orders >=40% of last-FY revenue) - refreshed live each run via Gokul's Chrome
 // Source: https://tools-ot.financiallyfree.in/api/companies (Order Tracker Dashboard, ORDERBOOK VIEW, 6-mo window, min mcap 100cr, >=40% of revenue)
