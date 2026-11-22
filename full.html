@@ -3096,6 +3096,7 @@ window.PULSE_DATE="20 Nov 2026";   // set when the Pulse landing sheet (command_
     var days=(today-d)/86400000;
     if(cad==='daily'){ if(d.getTime()>=ltd.getTime()) return ['\u2705 today','#0f9d58']; return ['\ud83d\udd34 STALE ('+Math.round(days)+'d old)','#e53935']; }
     if(cad==='weekly'){ return days<=10 ? ['\u2705 current','#0f9d58'] : ['\ud83d\udfe1 carried ('+Math.round(days)+'d)','#c9a227']; }
+    if(cad==='fortnight'){ return days<=15 ? ['\u2705 current','#0f9d58'] : ['\ud83d\udfe1 due ('+Math.round(days)+'d)','#c9a227']; }
     /* monthly */ return ['\u2705 latest','#0f9d58'];
   }
   var H=(window.HOLDINGS_LEDGER&&window.HOLDINGS_LEDGER.lastUpdated)||window.UNIV_DATE||'';
@@ -3112,12 +3113,12 @@ window.PULSE_DATE="20 Nov 2026";   // set when the Pulse landing sheet (command_
     ['Holdings prices + MF NAVs', H, 'daily'],
     ['Pulse (your book snapshot)', window.PULSE_DATE||'', 'daily'],
     ['Order Book (FF order tracker)', window.FF_DATE||'', 'weekly'],
-    ['FF 10-Year valuation bands (Daily Watch)', window.FFVAL_DATE||'', 'weekly'],
+    ['FF 10-Year valuation bands (Daily Watch)', window.FFVAL_DATE||'', 'fortnight'],
     ['Global index PEs \u2014 9 markets (Global Val.)', (function(){var g=gmvDate();var m=g.match(/\d{1,2}\s+[A-Za-z]{3,}\s+\d{4}/);return m?m[0]:'';})(), 'weekly'],
     ['Smart-Money MF portfolios (Trendlyne)', (typeof DATA!=='undefined'&&DATA.mf&&DATA.mf.asof)||'', 'monthly']
   ];
   var anyStale=false;
-  var body=feeds.map(function(r){var st=stat(r[1],r[2]); if(st[0].indexOf('STALE')>=0)anyStale=true; var cadlbl={daily:'daily',weekly:'weekly',monthly:'monthly'}[r[2]];
+  var body=feeds.map(function(r){var st=stat(r[1],r[2]); if(st[0].indexOf('STALE')>=0)anyStale=true; var cadlbl={daily:'daily',weekly:'weekly',fortnight:'15-day',monthly:'monthly'}[r[2]];
     return '<tr><td style="padding:3px 12px 3px 0">'+r[0]+'</td><td style="padding:3px 10px 3px 0;color:var(--muted);white-space:nowrap">'+(r[1]||'\u2014')+'</td><td style="padding:3px 10px 3px 0;color:var(--muted);font-size:11px">'+cadlbl+'</td><td style="padding:3px 0;white-space:nowrap"><span style="color:'+st[1]+';font-weight:700">'+st[0]+'</span></td></tr>';}).join('');
   var banner = anyStale
     ? '<div style="color:#e53935;font-weight:800;font-size:12px;margin:2px 0 8px">\u26a0\ufe0f A daily feed is NOT today\u2019s \u2014 this scan is INCOMPLETE. Re-run with Chrome connected.</div>'
