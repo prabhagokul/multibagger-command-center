@@ -344,6 +344,19 @@ window.addEventListener('load',__ph);window.addEventListener('resize',__ph);setI
   <section id="deals" class="panel active">
     <h2>Deals / FII-DII Buyings</h2>
     <div class="sheetstamp" id="st_deals">Last updated: —</div>
+    <div style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0 6px;background:linear-gradient(180deg,rgba(16,157,88,.07),transparent)">
+      <div style="font-weight:800;font-size:14px;margin-bottom:2px">🔎 Universe Lookup</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Type any company — see every signal it carries across your whole Command Center (stage · RS · 200-DMA · deep discount · order book · sector · holdings · smart-money MF · deals · concall). If it is nowhere in your universe, it says so.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <input id="uniLookInp" list="uniNames" placeholder="e.g. Reliance Industries, HFCL, TITAGARH…" autocomplete="off"
+          onkeydown="if(event.key==='Enter'){uniLookup();}" onchange="uniLookup()"
+          style="flex:1;min-width:240px;padding:8px 11px;font-size:14px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.05);color:var(--ink)">
+        <datalist id="uniNames"></datalist>
+        <button onclick="uniLookup()" style="padding:8px 16px;font-size:13px;font-weight:700;border:none;border-radius:9px;background:#0f9d58;color:#fff;cursor:pointer">Look up</button>
+        <button onclick="var i=document.getElementById('uniLookInp');i.value='';document.getElementById('uniLookRes').innerHTML='';i.focus();" style="padding:8px 12px;font-size:12px;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--muted);cursor:pointer">clear</button>
+      </div>
+      <div id="uniLookRes" style="margin-top:10px"></div>
+    </div>
     <div id="freshPanel3" style="margin:10px 0 4px"></div>
     <p class="muted" style="font-size:12.5px;margin:4px 0 10px">
       Daily <b>FII / DII cash-market</b> net flows and the <b>bulk / block / insider</b> deals that matter — the
@@ -3221,6 +3234,100 @@ window.PULSE_DATE="20 Nov 2026";   // set when the Pulse landing sheet (command_
   var ss=document.getElementById('st_deals'); if(ss) ss.textContent='Last updated: '+(window.DEALS_UPDATED||'—');
   renderDeals();
 }catch(e){ try{console.error('deals sheet',e);}catch(_){} } })();
+</script>
+<script>
+/* ===== Universe Lookup (added 25 Nov 2026, Gokul) — type any company, report every Command Center signal it
+   carries. Reads ONLY data already loaded in the page (UNIV_SIG/UNIV_NAMES/UNIV_SEC, NSE, FF_CAGR, FF_ORDERBOOK,
+   DATA.stage2/scanB/mf, HOLDINGS_LEDGER, DEALS_MONTHS) plus the Daily-Watch iframe's PEAD (concall guidance).
+   NEVER fabricates; lists the sources where the name is NOT found. ===== */
+(function(){
+ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+ function norm(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9 ]/g,' ').replace(/\b(LIMITED|LTD|THE)\b/g,' ').replace(/\s+/g,' ').trim();}
+ function toks(s){return norm(s).split(' ').filter(Boolean);}
+ function inr(n){n=+n;return isNaN(n)?'—':n.toLocaleString('en-IN',{maximumFractionDigits:2});}
+ function inr0(n){n=Math.round(+n);return isNaN(n)?'—':n.toLocaleString('en-IN');}
+ function pc(v){v=+v;return isNaN(v)?'—':((v>=0?'+':'')+(Math.round(v*10)/10)+'%');}
+ function nameHit(target,cand){ if(!cand)return false; var a=norm(target),b=norm(cand); if(!a||!b)return false; if(a===b)return true;
+   if((a.indexOf(b)>=0||b.indexOf(a)>=0)&&Math.min(a.length,b.length)>=5)return true;
+   var ta=toks(target),tb=toks(cand),common=ta.filter(function(t){return tb.indexOf(t)>=0&&t.length>=3;});
+   return common.length>=2 || (common.length>=1 && (ta.length<=2||tb.length<=2)); }
+ function buildIndex(){ var idx={};
+   function put(sym,name,sec){ if(!sym)return; sym=String(sym).toUpperCase(); if(!idx[sym])idx[sym]={sym:sym,name:name||sym,sector:sec||''};
+     else{ if((!idx[sym].name||idx[sym].name===sym)&&name)idx[sym].name=name; if(!idx[sym].sector&&sec)idx[sym].sector=sec; } }
+   try{var UN=window.UNIV_NAMES||{},US=window.UNIV_SEC||{};Object.keys(window.UNIV_SIG||{}).forEach(function(s){put(s,UN[s],US[s]);});}catch(e){}
+   try{(window.NSE&&window.NSE.stocks||[]).forEach(function(r){put(r[0],null,r[1]);});}catch(e){}
+   try{(window.FF_CAGR||[]).forEach(function(r){put(r[0],r[1],null);});}catch(e){}
+   try{(window.HOLDINGS_LEDGER&&window.HOLDINGS_LEDGER.positions||[]).forEach(function(p){put(p.sym,p.name,null);});}catch(e){}
+   return idx; }
+ function resolve(q,idx){ var Q=norm(q),syms=Object.keys(idx); if(!Q)return{hit:null,cands:[]};
+   var up=q.toUpperCase().trim(); if(idx[up])return{hit:idx[up],cands:[]};
+   var qc=Q.replace(/ /g,''); var byS=syms.filter(function(s){return s===qc||s.indexOf(qc)===0;});
+   var qt=toks(q); var byN=syms.filter(function(s){var n=norm(idx[s].name);return qt.length&&qt.every(function(t){return n.indexOf(t)>=0;});});
+   byN.sort(function(a,b){var na=norm(idx[a].name),nb=norm(idx[b].name);return (na===Q?0:1)-(nb===Q?0:1)||na.length-nb.length;});
+   var all=[]; byN.concat(byS).forEach(function(s){if(all.indexOf(s)<0)all.push(s);});
+   if(!all.length)return{hit:null,cands:[]};
+   return {hit:idx[all[0]],cands:all.slice(1,6).map(function(s){return idx[s];})}; }
+ function collect(ent){ var sym=ent.sym,nm=ent.name,rows=[],tally={pos:0,neg:0,neu:0};
+   function add(src,tone,text){rows.push({src:src,tone:tone,text:text}); if(tone==='pos')tally.pos++;else if(tone==='neg')tally.neg++;else if(tone==='neu'||tone==='opp')tally.neu++;}
+   function na(src,text){rows.push({src:src,tone:'na',text:text||'not present'});}
+   var sig=(window.UNIV_SIG||{})[sym]; var nse=null; try{nse=(window.NSE.stocks||[]).filter(function(r){return r[0]===sym;})[0];}catch(e){}
+   var cg=null; try{cg=(window.FF_CAGR||[]).filter(function(r){return r[0]===sym;})[0];}catch(e){}
+   var price=sig?sig[0]:(nse?nse[2]:null), vs200=sig?sig[1]:(nse?nse[3]:null), stage=sig?sig[2]:(nse?nse[5]:null), off3y=sig?sig[3]:(nse?nse[7]:null), cap=sig?sig[4]:(cg?cg[5]:null);
+   var band=cap==null?'':(cap<1500?' · micro-cap (<₹1,500 cr)':(cap<=10000?' · ✓ in the ₹1,500–10,000 cr multibagger band':' · large-cap (>₹10,000 cr)'));
+   if(sig) add('Universe','info','In your tracked universe (739 names)'+(cap!=null?' · mkt cap ₹'+inr0(cap)+' cr':'')+band);
+   else if(nse) add('Universe','info','In the Nifty-500 engine (not in the 739 tracked universe)'+(cap!=null?' · mkt cap ₹'+inr0(cap)+' cr':''));
+   else na('Universe','Not in the 739 tracked universe or the Nifty-500 engine');
+   if(price!=null) add('Price / vs 3-yr high','info','₹'+inr(price)+(off3y!=null?' · '+pc(off3y)+' vs 3-yr high':''));
+   if(stage!=null&&stage!==''){var st=+stage;add('Weinstein stage',st===2?'pos':(st===4?'neg':'neu'),'Stage '+st+(st===2?' (advancing)':st===4?' (declining)':st===3?' (topping)':' (basing)'));}
+   if(vs200!=null) add('200-DMA',vs200>=0?'pos':'neg',(vs200>=0?'Above':'Below')+' 200-DMA ('+pc(vs200)+')');
+   var rs=nse?nse[4]:null; if(rs!=null&&rs!=='') add('Relative strength (RS)',rs>=80?'pos':(rs<=30?'neg':'neu'),'RS '+rs+(rs>=80?' (leading)':rs<=30?' (laggard)':''));
+   var rsi=null; try{rsi=(window.NSE.rsi60||[]).filter(function(r){return r[0]===sym;})[0];}catch(e){}
+   if(rsi) add('Weekly RSI > 60','pos','Weekly RSI '+rsi[1]+' — in the momentum list'); else na('Weekly RSI > 60','not in the RSI>60 momentum list');
+   var ddHit=false; try{ddHit=(window.DATA.scanB||[]).some(function(o){return (o.s||o[0])===sym;});}catch(e){}
+   if(!ddHit){try{ddHit=(window.NSE.dd||[]).some(function(r){return r[0]===sym;});}catch(e){}}
+   if(ddHit) add('Deep discount','opp','≤−40% from 3-yr high AND back above 200-DMA (opportunity)'); else na('Deep discount','not a deep-discount candidate');
+   if(cg&&cg[3]!=null) add('Scan A Current CAGR',cg[3]>=0?'pos':'neg','Implied CAGR '+cg[3]+'%'+(cg[2]!=null?' · P/E '+cg[2]:'')); else na('Scan A Current CAGR','no CAGR target tracked');
+   var ob=null; try{ob=(window.FF_ORDERBOOK||[]).filter(function(r){return nameHit(nm,r[0]);})[0];}catch(e){}
+   if(ob) add('Order book',ob[1]>=100?'pos':'neu','Orders ≈'+ob[1]+'% of last-FY revenue'); else na('Order book','not in the FF order-book list');
+   if(ent.sector){var secRow=null; try{secRow=(window.NSE.sectors||[]).filter(function(r){return norm(r[0])===norm(ent.sector);})[0];}catch(e){}
+     if(secRow){var avgRS=secRow[1];add('Sector breadth',avgRS>=60?'pos':(avgRS<=40?'neg':'neu'),ent.sector+' · sector avg RS '+avgRS+' · '+secRow[2]+'% in Stage 2');}}
+   try{var pos=(window.HOLDINGS_LEDGER.positions||[]).filter(function(p){return p.sym===sym||nameHit(nm,p.name);})[0];
+     if(pos){var us=(window.HOLDINGS_LEDGER.us||{})[pos.sym]||{};var bs=(pos.txns||[]).filter(function(t){return t.action==='BUY';});var q=0,c=0;bs.forEach(function(t){q+=+t.qty;c+=t.qty*t.price;});var avg=q?c/q:null,cur=pos.curManual,ret=(avg&&cur)?((cur/avg-1)*100):null;
+       add('Your holdings',ret==null?'neu':(ret>=0?'pos':'neg'),'In the holdings ledger'+(ret!=null?' · '+pc(ret)+' P&L':'')+(us.signal?' · signal '+us.signal:''));}
+     else na('Your holdings','you don’t hold it');}catch(e){na('Your holdings','—');}
+   try{var mf=[];(window.DATA.mf.funds||[]).forEach(function(f){var mc=null,seen=false;['top','nb','tr'].forEach(function(k){(f[k]||[]).forEach(function(h){if(nameHit(nm,h[0])){seen=true;var m=(k==='top'?h[2]:(k==='tr'?h[1]:0));if(mc==null)mc=m;}});});if(seen)mf.push({fund:f.f,mc:mc||0});});
+     if(mf.length){var ad=mf.filter(function(h){return h.mc>0;}).length,tr=mf.filter(function(h){return h.mc<0;}).length;
+       add('Smart-money MF',tr>ad?'neg':(ad>0?'pos':'neu'),mf.length+' tracked fund(s) hold it'+(ad?' · '+ad+' adding':'')+(tr?' · '+tr+' trimming':'')+' ['+mf.map(function(h){return h.fund;}).slice(0,4).join(', ')+']');}
+     else na('Smart-money MF','no tracked fund holds it');}catch(e){na('Smart-money MF','—');}
+   try{var dm=[];Object.keys(window.DEALS_MONTHS||{}).forEach(function(mk){(window.DEALS_MONTHS[mk].deals||[]).forEach(function(d){if(nameHit(nm,d.stock)||String(d.stock||'').toUpperCase()===sym)dm.push(d);});});
+     if(dm.length){var buy=dm.filter(function(d){return d.side==='Buy';}),sell=dm.filter(function(d){return d.side==='Sell';});var tone=buy.length&&!sell.length?'pos':(sell.length&&!buy.length?'neg':'neu');
+       add('Deals (bulk/block/insider)',tone,dm.length+' deal(s): '+buy.length+' buy, '+sell.length+' sell — '+dm.slice(0,3).map(function(d){return esc(d.actor)+' '+d.side+' ('+d.kind+', '+d.date+')';}).join('; '));}
+     else na('Deals (bulk/block/insider)','no deal on record this period');}catch(e){na('Deals (bulk/block/insider)','—');}
+   try{var pead=null;var fr=document.getElementById('dailyFrame');if(fr&&fr.contentWindow&&fr.contentWindow.PEAD)pead=fr.contentWindow.PEAD;
+     if(pead){var ch=pead.filter(function(x){return nameHit(nm,x.co);});
+       if(ch.length){var c=ch[0];var stt=(c.status||'').toLowerCase();var tone=/rais|new/.test(stt)?'pos':(/lower/.test(stt)?'neg':'neu');add('Concall guidance',tone,c.status+(c.sd?' · '+c.sd:'')+(c.date?' ('+c.date+')':''));}
+       else na('Concall guidance','no recent guidance on record');}
+     else na('Concall guidance','open the Daily Watch tab once to load concall data');}catch(e){na('Concall guidance','—');}
+   return {rows:rows,tally:tally}; }
+ window.uniLookup=function(){ var inp=document.getElementById('uniLookInp'),out=document.getElementById('uniLookRes'); if(!inp||!out)return;
+   var q=(inp.value||'').trim(); if(!q){out.innerHTML='';return;}
+   var idx=buildIndex(),r=resolve(q,idx);
+   if(!r.hit){ out.innerHTML='<div style="padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:rgba(229,57,53,.07);color:#e53935;font-weight:600">“'+esc(q)+'” is not in your Command Center universe — no symbol or company-name match in any data source.</div>'; return; }
+   var ent=r.hit,res=collect(ent);
+   var tc={pos:'#0f9d58',neg:'#e53935',neu:'#c9a227',opp:'#3b82f6',info:'#8a94a6',na:'var(--muted)'},tb={pos:'rgba(16,157,88,.08)',neg:'rgba(229,57,53,.08)',neu:'rgba(201,162,39,.08)',opp:'rgba(59,130,246,.08)',info:'rgba(138,148,166,.06)',na:'transparent'};
+   var sigRows=res.rows.filter(function(x){return x.tone!=='info';});
+   var found=sigRows.filter(function(x){return x.tone!=='na';});
+   var head='<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px"><span style="font-weight:800;font-size:15px">'+esc(ent.name)+'</span><span style="font-size:12px;color:var(--muted)">'+esc(ent.sym)+(ent.sector?' · '+esc(ent.sector):'')+'</span></div>';
+   var tally='<div style="font-size:12.5px;margin-bottom:10px"><span style="color:#0f9d58;font-weight:700">'+res.tally.pos+' positive</span> · <span style="color:#e53935;font-weight:700">'+res.tally.neg+' negative</span> · <span style="color:#c9a227;font-weight:700">'+res.tally.neu+' neutral/opportunity</span> · <span style="color:var(--muted)">present in '+found.length+' of '+sigRows.length+' signal checks</span></div>';
+   var list=res.rows.map(function(x){var c=tc[x.tone],bg=tb[x.tone],dot=x.tone==='pos'?'▲':x.tone==='neg'?'▼':x.tone==='na'?'—':x.tone==='opp'?'◆':'●';
+     return '<div style="display:flex;gap:10px;padding:6px 10px;border-left:3px solid '+c+';background:'+bg+';border-radius:6px;margin-bottom:5px;align-items:baseline"><span style="color:'+c+';font-weight:800;min-width:14px">'+dot+'</span><span style="min-width:165px;font-weight:700;font-size:12.5px">'+esc(x.src)+'</span><span style="font-size:12.5px;color:'+(x.tone==='na'?'var(--muted)':'var(--ink)')+'">'+esc(x.text)+'</span></div>';}).join('');
+   var cand=r.cands.length?'<div style="font-size:11.5px;color:var(--muted);margin-top:8px">Did you mean: '+r.cands.map(function(c){return '<a href="#" onclick="var i=document.getElementById(\'uniLookInp\');i.value=\''+esc(c.sym)+'\';uniLookup();return false;" style="color:#3b82f6;text-decoration:none">'+esc(c.name)+' ('+esc(c.sym)+')</a>';}).join(' · ')+'</div>':'';
+   out.innerHTML='<div style="border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:rgba(255,255,255,.02)">'+head+tally+list+cand+'</div>'; };
+ function populate(){ var dl=document.getElementById('uniNames'); if(!dl)return; var idx=buildIndex(),seen={},opts=[];
+   Object.keys(idx).forEach(function(s){var e=idx[s];var v=e.name;if(seen[v])return;seen[v]=1;opts.push('<option value="'+esc(v)+'">'+esc(e.name!==e.sym?e.name+' ('+e.sym+')':e.sym)+'</option>');});
+   dl.innerHTML=opts.join(''); }
+ if(document.readyState!=='loading')populate(); else document.addEventListener('DOMContentLoaded',populate);
+})();
 </script>
 <style>
 /* Filter dropdowns must be readable in BOTH light and dark mode (fix 19 Nov 2026:
