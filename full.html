@@ -3182,11 +3182,22 @@ window.PULSE_DATE="20 Nov 2026";   // set when the Pulse landing sheet (command_
     // FII/DII table
     if(fb){
       var fh='<tr><th style="text-align:left">Date</th><th class="right">FII cash net (₹cr)</th><th class="right">DII cash net (₹cr)</th><th class="right">Combined (₹cr)</th></tr>';
-      var fr=(M.fiidii||[]).map(function(x){
+      var arrF=(M.fiidii||[]);
+      // ---- Month total row (FII / DII / Combined — net inflow vs outflow) ----
+      var tfii=arrF.reduce(function(a,x){return a+(+x.fii||0);},0);
+      var tdii=arrF.reduce(function(a,x){return a+(+x.dii||0);},0);
+      var tcmb=tfii+tdii;
+      var totCell=function(v){var pos=v>=0,c=pos?'#0f9d58':'#e53935';
+        return '<span style="color:'+c+';font-weight:800">'+(pos?'+':'')+inr(Math.round(v))+'</span>'
+          +'<div style="font-size:10px;font-weight:700;color:'+c+';opacity:.9">'+(pos?'net inflow':'net outflow')+'</div>';};
+      var trow=arrF.length?('<tr style="background:rgba(16,157,88,.06);border-bottom:2px solid var(--line)">'
+        +'<td style="font-weight:800">Month total<div style="font-size:10px;color:var(--muted);font-weight:600">'+arrF.length+' trading days</div></td>'
+        +'<td class="right">'+totCell(tfii)+'</td><td class="right">'+totCell(tdii)+'</td><td class="right">'+totCell(tcmb)+'</td></tr>'):'';
+      var fr=arrF.map(function(x){
         var col=function(v){return '<span style="color:'+(v>=0?'#0f9d58':'#e53935')+';font-weight:600">'+(v>=0?'+':'')+inr(v)+'</span>';};
         return '<tr><td>'+x.d+'</td><td class="right">'+col(x.fii)+'</td><td class="right">'+col(x.dii)+'</td><td class="right">'+col(+(x.fii+x.dii).toFixed(2))+'</td></tr>';
       }).join('');
-      fb.innerHTML=fh+(fr||'<tr><td style="padding:8px;color:var(--muted)">—</td></tr>');
+      fb.innerHTML=fh+trow+(fr||'<tr><td style="padding:8px;color:var(--muted)">—</td></tr>');
     }
     // deals table
     if(db){
