@@ -2464,7 +2464,17 @@ function toggleFFList(){
   if(d.innerHTML){ d.innerHTML=''; if(b)b.textContent='▸ Full FF order-book list (top 100 of '+(window.FF_TOTAL||'')+', ≥40%)'; return; }
   if(!window.FF_ORDERBOOK){ d.innerHTML='<p class="muted" style="font-size:12.5px">List file (ff_orderbook.js) not found — keep it in the same folder as this dashboard.</p>'; return; }
   if(b)b.textContent='▾ Hide full FF order-book list';
-  var rows=window.FF_ORDERBOOK.map(function(r,i){ return '<tr><td class="center" style="color:var(--muted)">'+(i+1)+'</td><td>'+r[0]+'</td><td class="center"><span class="pill green">'+r[1].toFixed(2)+'%</span></td><td class="center">'+r[2]+'</td><td class="right" style="color:var(--green)">₹'+r[3].toLocaleString('en-IN')+' Cr</td><td class="right">₹'+r[4].toLocaleString('en-IN')+' Cr (FY'+r[5]+')</td></tr>'; }).join('');
+  // resolve NSE symbol from the full company name so the row is searchable by TICKER too (fix 26 Nov 2026 — GRSE/JWL etc. weren't findable)
+  var nameToSym=(function(){ var ents=[],exact={};
+    function norm(s){return String(s||'').toUpperCase().replace(/\b(LIMITED|LTD|THE)\b/g,'').replace(/[^A-Z0-9]/g,'');}
+    function add(sym,name){ if(!sym||!name)return; var k=norm(name); if(!k)return; ents.push([k,sym]); if(!exact[k])exact[k]=sym; }
+    try{var UN=window.UNIV_NAMES||{};Object.keys(UN).forEach(function(s){add(s,UN[s]);});}catch(e){}
+    try{var NA=window.NSE_ALL||{};Object.keys(NA).forEach(function(s){add(s,NA[s]);});}catch(e){}
+    return function(name){ var k=norm(name); if(!k)return ''; if(exact[k])return exact[k];
+      var best='',bl=0; for(var i=0;i<ents.length;i++){ var ek=ents[i][0], n=Math.min(ek.length,k.length); if(n<9)continue;
+        var L=0; while(L<n && ek.charCodeAt(L)===k.charCodeAt(L)) L++; if(L>=9 && L>=0.72*n && L>bl){ bl=L; best=ents[i][1]; } }
+      return best; }; })();
+  var rows=window.FF_ORDERBOOK.map(function(r,i){ var sym=nameToSym(r[0]); var nm=r[0]+(sym?' <span style="color:var(--muted);font-size:11px">('+sym+')</span>':''); return '<tr><td class="center" style="color:var(--muted)">'+(i+1)+'</td><td>'+nm+'</td><td class="center"><span class="pill green">'+r[1].toFixed(2)+'%</span></td><td class="center">'+r[2]+'</td><td class="right" style="color:var(--green)">₹'+r[3].toLocaleString('en-IN')+' Cr</td><td class="right">₹'+r[4].toLocaleString('en-IN')+' Cr (FY'+r[5]+')</td></tr>'; }).join('');
   d.innerHTML='<div class="card"><p class="muted" style="font-size:12.5px;margin-top:0">Orders ≥40% of last-FY revenue · top 100 of '+window.FF_TOTAL+' · Financially Free tracker (6-mo window), as of '+window.FF_DATE+'. AI-extracted — verify before acting.</p><table><tr><th class="center">#</th><th>Company</th><th class="center">Orders % of rev</th><th class="center">Orders</th><th class="right">Order value</th><th class="right">Company revenue</th></tr>'+rows+'</table></div>';
 }
 
